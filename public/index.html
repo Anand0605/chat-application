@@ -8,19 +8,31 @@
 </head>
 
 <body>
-    <h1>chatting</h1>
-    <input type="text"id="message"placeholder="enter message"/>
+    <h1>Chatting</h1>
+    <input type="text" id="message" placeholder="Enter message" />
     <button id="sendBtn">Send</button>
+    <div id="allMessages"></div> <!-- यहाँ id बदली गई -->
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
-        const sendBtn = document.getElementById("sendBtn")
-        const messageInput = document.getElementById("message")
-        sendBtn.addEventListener("click",(e)=>{
+        const sendBtn = document.getElementById("sendBtn");
+        const messageInput = document.getElementById("message");
+        const allMessages = document.getElementById("allMessages"); // सही id select करें
+
+        socket.on("message", (message) => {
+            const p = document.createElement("p");
+            p.innerText = message;
+            allMessages.appendChild(p); // सही div में message append करें
+        });
+
+        sendBtn.addEventListener("click", () => {
             const message = messageInput.value;
-            console.log(message)
-        })
+            if (message.trim() !== "") {
+                socket.emit("user-message", message);
+                messageInput.value = ""; // Input field को clear करें
+            }
+        });
     </script>
 </body>
 
